@@ -76,14 +76,6 @@ fn main() {
     let mut probe = Probe::create(program);
     probe.attach().unwrap();
 
-    /*
-     * Wait for some commands to run.
-     */
-    std::thread::sleep(std::time::Duration::from_secs(10));
-
-    /*
-     * Print all the programs that ran within the last 10 seconds.
-     */
     fn from_cstr(buf: &[u8]) -> String {
         String::from_utf8_lossy(match buf.iter().position(|c| *c == 0) {
             Some(p) => &buf[0..p],
@@ -92,16 +84,19 @@ fn main() {
         .to_string()
     }
 
-    println!("Programs ran in the last 10 seconds:");
-    while let Ok(entry) = queue.pop() {
-        println!(
-            "    pid={}, tgid={}, gid={}, uid={}, utime={}, comm={}",
-            entry.pid,
-            entry.tgid,
-            entry.uid_gid >> 32,
-            entry.uid_gid as u32,
-            entry.utime,
-            from_cstr(&entry.comm)
-        );
+    loop {
+        std::thread::sleep(std::time::Duration::from_secs(1));
+
+        while let Ok(entry) = queue.pop() {
+            println!(
+                "comm={}, pid={}, tgid={}, gid={}, uid={}, utime={}",
+                from_cstr(&entry.comm),
+                entry.pid,
+                entry.tgid,
+                entry.uid_gid >> 32,
+                entry.uid_gid as u32,
+                entry.utime,
+            );
+        }
     }
 }
