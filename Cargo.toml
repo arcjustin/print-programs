@@ -7,6 +7,6 @@ edition = "2021"
 
 [dependencies]
 bpf-api = "0.2"
-bpf-script = "0.1"
-btf = "0.3"
-btf-derive = "0.3"
+bpf-script = "0.5"
+bpf-script-derive = "0.5"
+btf = "0.4"
